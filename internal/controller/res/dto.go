@@ -2,11 +2,34 @@ package res
 
 import "member_role/internal/domain"
 
+type ListTotalDto[T any] struct {
+	Contents []T `json:"contents"`
+	Total    int `json:"total"`
+}
+
+func NewListTotalDto[T any](contents []T, total int) ListTotalDto[T] {
+	return ListTotalDto[T]{
+		Contents: contents,
+		Total:    total,
+	}
+}
+
 // 기본룰입니다 특정 사용자 권한을 확인할때 사용됩니다.
 
 type MemberRole struct {
 	Id         int `json:"id"`
 	CafeRoleId int `json:"cafe_role_id"`
+}
+
+func ToDtoList(domains []domain.Role) []MemberRole {
+	results := make([]MemberRole, len(domains))
+	for i, d := range domains {
+		results[i] = MemberRole{
+			Id:         d.Id,
+			CafeRoleId: d.CafeRoleId,
+		}
+	}
+	return results
 }
 
 // 전체 사용자 권한을 확인할때 사용됩니다.
@@ -17,11 +40,12 @@ type MemberDetailRole struct {
 	MemberId   int `json:"member_id"`
 }
 
-func ToDtoList(domains []domain.Role) []MemberRole {
-	results := make([]MemberRole, len(domains))
+func ToDetailList(domains []domain.Role) []MemberDetailRole {
+	results := make([]MemberDetailRole, len(domains))
 	for i, d := range domains {
-		results[i] = MemberRole{
+		results[i] = MemberDetailRole{
 			Id:         d.Id,
+			MemberId:   d.MemberId,
 			CafeRoleId: d.CafeRoleId,
 		}
 	}

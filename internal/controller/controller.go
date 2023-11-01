@@ -4,6 +4,7 @@ import (
 	"context"
 	"member_role/internal/controller/req"
 	"member_role/internal/controller/res"
+	"member_role/internal/page"
 	"member_role/internal/service"
 )
 
@@ -27,4 +28,12 @@ func (c Controller) GetListByMemberId(ctx context.Context, cafeId int, memberId 
 		return []res.MemberRole{}, err
 	}
 	return res.ToDtoList(domains), nil
+}
+
+func (c Controller) GetList(ctx context.Context, cafeId int, reqPage page.ReqPage) ([]res.MemberDetailRole, int, error) {
+	domains, total, err := c.s.GetList(ctx, cafeId, reqPage)
+	if err != nil {
+		return []res.MemberDetailRole{}, 0, err
+	}
+	return res.ToDetailList(domains), total, nil
 }
