@@ -53,3 +53,30 @@ func (r Repository) GetList(ctx context.Context, cafeId int, reqPage page.ReqPag
 
 	return model.ToDomainList(models), total, nil
 }
+
+func (r Repository) Patch(ctx context.Context, cafeId int, memberId int, id int,
+	validFunc func(domains []domain.Role) (domain.Role, error),
+	mergeFunc func(d domain.Role) domain.Role) error {
+	var models []model.Role
+	err := r.db.NewSelect().Model(&models).Where("cafe_id = ? and member_id = ? and id = ?", cafeId, memberId, id).
+		Scan(ctx)
+	if err != nil {
+		log.Println("Patch NewSelect err: ", err)
+		return errors.New("internal server error")
+	}
+
+	validDomain, err := validFunc(model.ToDomainList(models))
+	if err != nil {
+		return err
+	}
+
+	mergedDomain := mergeFunc(validDomain)
+
+	m := model.ToModel(mergedDomain)
+	_, err = r.db.NewInsert().Model(&m).On("CONFLICT (id) DO UPDATE").Exec(ctx)
+	if err != nil {
+		log.Println("Patch NewInsert err: ", err)
+		return errors.New("internal server error")
+	}
+	return nil
+}

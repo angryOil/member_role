@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"member_role/internal/domain"
 	"member_role/internal/page"
 	"member_role/internal/repository"
@@ -28,4 +29,25 @@ func (s Service) GetListByMemberId(ctx context.Context, cafeId int, memberId int
 func (s Service) GetList(ctx context.Context, cafeId int, reqPage page.ReqPage) ([]domain.Role, int, error) {
 	domains, total, err := s.repo.GetList(ctx, cafeId, reqPage)
 	return domains, total, err
+}
+
+func (s Service) Patch(ctx context.Context, reqD domain.Role) error {
+	err := s.repo.Patch(ctx, reqD.CafeId, reqD.MemberId, reqD.Id,
+		func(domains []domain.Role) (domain.Role, error) {
+			if len(domains) == 0 {
+				return domain.Role{}, errors.New("no rows")
+			}
+			return domains[0], nil
+		},
+		func(d domain.Role) domain.Role {
+			return domain.Role{
+				Id:         d.Id,
+				MemberId:   d.MemberId,
+				CafeId:     d.CafeId,
+				CafeRoleId: reqD.CafeRoleId,
+				CreatedAt:  d.CreatedAt,
+			}
+		},
+	)
+	return err
 }

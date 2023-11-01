@@ -37,3 +37,9 @@ func (c Controller) GetList(ctx context.Context, cafeId int, reqPage page.ReqPag
 	}
 	return res.ToDetailList(domains), total, nil
 }
+
+func (c Controller) Patch(ctx context.Context, cafeId int, memberId int, id int, pDto req.PatchDto) error {
+	d := pDto.ToDomain(memberId, cafeId, id)
+	err := c.s.Patch(ctx, d)
+	return err
+}
