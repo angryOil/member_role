@@ -36,7 +36,7 @@ func ToDtoList(domains []domain.Role) []MemberRole {
 
 type MemberDetailRole struct {
 	Id         int    `json:"id"`
-	CafeRoleId string `json:"cafe_role_idd"`
+	CafeRoleId string `json:"cafe_role_ids"`
 	MemberId   int    `json:"member_id"`
 }
 
