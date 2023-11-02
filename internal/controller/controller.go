@@ -16,12 +16,12 @@ func NewController(s service.Service) Controller {
 	return Controller{s: s}
 }
 
-func (c Controller) GetListByMemberId(ctx context.Context, cafeId int, memberId int) ([]res.MemberRole, error) {
+func (c Controller) GetListByMemberId(ctx context.Context, cafeId int, memberId int) (res.MemberRole, error) {
 	domains, err := c.s.GetListByMemberId(ctx, cafeId, memberId)
 	if err != nil {
-		return []res.MemberRole{}, err
+		return res.MemberRole{}, err
 	}
-	return res.ToDtoList(domains), nil
+	return res.ToDto(domains), nil
 }
 
 func (c Controller) GetList(ctx context.Context, cafeId int, reqPage page.ReqPage) ([]res.MemberDetailRole, int, error) {

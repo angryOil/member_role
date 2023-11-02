@@ -17,19 +17,15 @@ func NewListTotalDto[T any](contents []T, total int) ListTotalDto[T] {
 // 기본룰입니다 특정 사용자 권한을 확인할때 사용됩니다.
 
 type MemberRole struct {
-	Id         int    `json:"id"`
-	CafeRoleId string `json:"cafe_role_ids"`
+	Id         int    `json:"id,omitempty"`
+	CafeRoleId string `json:"cafe_role_ids,omitempty"`
 }
 
-func ToDtoList(domains []domain.Role) []MemberRole {
-	results := make([]MemberRole, len(domains))
-	for i, d := range domains {
-		results[i] = MemberRole{
-			Id:         d.Id,
-			CafeRoleId: d.CafeRoleIds,
-		}
+func ToDto(d domain.Role) MemberRole {
+	return MemberRole{
+		Id:         d.Id,
+		CafeRoleId: d.CafeRoleIds,
 	}
-	return results
 }
 
 // 전체 사용자 권한을 확인할때 사용됩니다.

@@ -16,9 +16,12 @@ func NewService(repo repository.Repository) Service {
 	return Service{repo: repo}
 }
 
-func (s Service) GetListByMemberId(ctx context.Context, cafeId int, memberId int) ([]domain.Role, error) {
+func (s Service) GetListByMemberId(ctx context.Context, cafeId int, memberId int) (domain.Role, error) {
 	domains, err := s.repo.GetListByMemberId(ctx, cafeId, memberId)
-	return domains, err
+	if err != nil || len(domains) == 0 {
+		return domain.Role{}, err
+	}
+	return domains[0], err
 }
 
 func (s Service) GetList(ctx context.Context, cafeId int, reqPage page.ReqPage) ([]domain.Role, int, error) {
