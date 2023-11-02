@@ -51,3 +51,8 @@ func (s Service) Patch(ctx context.Context, reqD domain.Role) error {
 	)
 	return err
 }
+
+func (s Service) Delete(ctx context.Context, cafeId int, memberId int, id int) error {
+	err := s.repo.Delete(ctx, cafeId, memberId, id)
+	return err
+}

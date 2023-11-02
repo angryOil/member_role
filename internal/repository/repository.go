@@ -80,3 +80,13 @@ func (r Repository) Patch(ctx context.Context, cafeId int, memberId int, id int,
 	}
 	return nil
 }
+
+func (r Repository) Delete(ctx context.Context, cafeId int, memberId int, id int) error {
+	var m model.Role
+	_, err := r.db.NewDelete().Model(&m).Where("cafe_id = ? and member_id = ? and id = ?", cafeId, memberId, id).Exec(ctx)
+	if err != nil {
+		log.Println("Delete NewDelete err: ", err)
+		return errors.New("internal server error")
+	}
+	return nil
+}

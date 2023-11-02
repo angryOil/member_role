@@ -24,7 +24,7 @@ func NewHandler(c controller.Controller) http.Handler {
 	r.HandleFunc("/member-roles/{cafeId:[0-9]+}", h.getList).Methods(http.MethodGet)
 	r.HandleFunc("/member-roles/{cafeId:[0-9]+}/{memberId:[0-9]+}", h.create).Methods(http.MethodPost)
 	r.HandleFunc("/member-roles/{cafeId:[0-9]+}/{memberId:[0-9]+}/{id:[0-9]+}", h.patch).Methods(http.MethodPatch)
-	//r.HandleFunc("/member-roles/{cafeId:[0-9]+}/{memberId:[0-9]+}/{id:[0-9]+}", h.delete).Methods(http.MethodDelete)
+	r.HandleFunc("/member-roles/{cafeId:[0-9]+}/{memberId:[0-9]+}/{id:[0-9]+}", h.delete).Methods(http.MethodDelete)
 	return r
 }
 
@@ -143,6 +143,33 @@ func (h Handler) patch(w http.ResponseWriter, r *http.Request) {
 		if strings.Contains(err.Error(), "no rows") {
 			http.Error(w, err.Error(), http.StatusNotFound)
 			return
+		}
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h Handler) delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	cafeId, err := strconv.Atoi(vars["cafeId"])
+	if err != nil {
+		http.Error(w, "invalid cafe id", http.StatusBadRequest)
+		return
+	}
+	memberId, err := strconv.Atoi(vars["memberId"])
+	if err != nil {
+		http.Error(w, "invalid member id", http.StatusBadRequest)
+		return
+	}
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(w, "invalid member role id", http.StatusBadRequest)
+		return
+	}
+	err = h.c.Delete(r.Context(), cafeId, memberId, id)
+	if err != nil {
+		if strings.Contains(err.Error(), "invalid") {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
