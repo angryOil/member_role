@@ -18,15 +18,15 @@ func (d CreateDto) ToDomain(memberId, cafeId int) domain.Role {
 	}
 }
 
-type PatchDto struct {
+type PutDto struct {
 	CafeRoleIds string `json:"cafe_role_ids"`
 }
 
-func (d PatchDto) ToDomain(memberId, cafeId, id int) domain.Role {
+func (d PutDto) ToDomain(memberId, cafeId int) domain.Role {
 	return domain.Role{
-		Id:          id,
 		MemberId:    memberId,
 		CafeId:      cafeId,
 		CafeRoleIds: d.CafeRoleIds,
+		CreatedAt:   time.Now(),
 	}
 }

@@ -8,7 +8,6 @@ import (
 	"member_role/internal/domain"
 	"member_role/internal/page"
 	"member_role/internal/repository/model"
-	"strings"
 )
 
 type Repository struct {
@@ -17,19 +16,6 @@ type Repository struct {
 
 func NewRepository(db bun.IDB) Repository {
 	return Repository{db: db}
-}
-
-func (r Repository) Create(ctx context.Context, d domain.Role) error {
-	m := model.ToModel(d)
-	_, err := r.db.NewInsert().Model(&m).Exec(ctx)
-	if err != nil {
-		if strings.Contains(err.Error(), "duplicate") {
-			return err
-		}
-		log.Println("Create NewInsert err: ", err)
-		return errors.New("internal server error")
-	}
-	return nil
 }
 
 func (r Repository) GetListByMemberId(ctx context.Context, cafeId int, memberId int) ([]domain.Role, error) {
@@ -54,28 +40,16 @@ func (r Repository) GetList(ctx context.Context, cafeId int, reqPage page.ReqPag
 	return model.ToDomainList(models), total, nil
 }
 
-func (r Repository) Patch(ctx context.Context, cafeId int, memberId int, id int,
-	validFunc func(domains []domain.Role) (domain.Role, error),
-	mergeFunc func(d domain.Role) domain.Role) error {
-	var models []model.Role
-	err := r.db.NewSelect().Model(&models).Where("cafe_id = ? and member_id = ? and id = ?", cafeId, memberId, id).
-		Scan(ctx)
-	if err != nil {
-		log.Println("Patch NewSelect err: ", err)
-		return errors.New("internal server error")
-	}
+func (r Repository) Upsert(ctx context.Context, d domain.Role) error {
+	m := model.ToModel(d)
 
-	validDomain, err := validFunc(model.ToDomainList(models))
-	if err != nil {
-		return err
-	}
+	_, err := r.db.NewInsert().Model(&m).
+		On("CONFLICT (cafe_id,member_id) DO UPDATE").
+		Set("cafe_role_ids = EXCLUDED.cafe_role_ids").
+		Exec(ctx)
 
-	mergedDomain := mergeFunc(validDomain)
-
-	m := model.ToModel(mergedDomain)
-	_, err = r.db.NewInsert().Model(&m).On("CONFLICT (id) DO UPDATE").Exec(ctx)
 	if err != nil {
-		log.Println("Patch NewInsert err: ", err)
+		log.Println("Upsert NewInsert err: ", err)
 		return errors.New("internal server error")
 	}
 	return nil

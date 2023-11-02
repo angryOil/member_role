@@ -16,11 +16,6 @@ func NewService(repo repository.Repository) Service {
 	return Service{repo: repo}
 }
 
-func (s Service) Create(ctx context.Context, d domain.Role) error {
-	err := s.repo.Create(ctx, d)
-	return err
-}
-
 func (s Service) GetListByMemberId(ctx context.Context, cafeId int, memberId int) ([]domain.Role, error) {
 	domains, err := s.repo.GetListByMemberId(ctx, cafeId, memberId)
 	return domains, err
@@ -31,24 +26,11 @@ func (s Service) GetList(ctx context.Context, cafeId int, reqPage page.ReqPage) 
 	return domains, total, err
 }
 
-func (s Service) Patch(ctx context.Context, reqD domain.Role) error {
-	err := s.repo.Patch(ctx, reqD.CafeId, reqD.MemberId, reqD.Id,
-		func(domains []domain.Role) (domain.Role, error) {
-			if len(domains) == 0 {
-				return domain.Role{}, errors.New("no rows")
-			}
-			return domains[0], nil
-		},
-		func(d domain.Role) domain.Role {
-			return domain.Role{
-				Id:          d.Id,
-				MemberId:    d.MemberId,
-				CafeId:      d.CafeId,
-				CafeRoleIds: reqD.CafeRoleIds,
-				CreatedAt:   d.CreatedAt,
-			}
-		},
-	)
+func (s Service) Upsert(ctx context.Context, d domain.Role) error {
+	if d.CafeRoleIds == "" {
+		return errors.New("no cafe_role ids")
+	}
+	err := s.repo.Upsert(ctx, d)
 	return err
 }
 
