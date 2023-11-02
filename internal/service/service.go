@@ -41,11 +41,11 @@ func (s Service) Patch(ctx context.Context, reqD domain.Role) error {
 		},
 		func(d domain.Role) domain.Role {
 			return domain.Role{
-				Id:         d.Id,
-				MemberId:   d.MemberId,
-				CafeId:     d.CafeId,
-				CafeRoleId: reqD.CafeRoleId,
-				CreatedAt:  d.CreatedAt,
+				Id:          d.Id,
+				MemberId:    d.MemberId,
+				CafeId:      d.CafeId,
+				CafeRoleIds: reqD.CafeRoleIds,
+				CreatedAt:   d.CreatedAt,
 			}
 		},
 	)

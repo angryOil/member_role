@@ -20,8 +20,8 @@ type Handler struct {
 func NewHandler(c controller.Controller) http.Handler {
 	r := mux.NewRouter()
 	h := Handler{c: c}
-	r.HandleFunc("/member-roles/{cafeId:[0-9]+}/{memberId:[0-9]+}", h.getByMemberId).Methods(http.MethodGet)
 	r.HandleFunc("/member-roles/{cafeId:[0-9]+}", h.getList).Methods(http.MethodGet)
+	r.HandleFunc("/member-roles/{cafeId:[0-9]+}/{memberId:[0-9]+}", h.getByMemberId).Methods(http.MethodGet)
 	r.HandleFunc("/member-roles/{cafeId:[0-9]+}/{memberId:[0-9]+}", h.create).Methods(http.MethodPost)
 	r.HandleFunc("/member-roles/{cafeId:[0-9]+}/{memberId:[0-9]+}/{id:[0-9]+}", h.patch).Methods(http.MethodPatch)
 	r.HandleFunc("/member-roles/{cafeId:[0-9]+}/{memberId:[0-9]+}/{id:[0-9]+}", h.delete).Methods(http.MethodDelete)
