@@ -6,27 +6,27 @@ import (
 )
 
 type CreateDto struct {
-	CafeRoleId int `json:"cafe_role_id"`
+	CafeRoleIds string `json:"cafe_role_ids"`
 }
 
 func (d CreateDto) ToDomain(memberId, cafeId int) domain.Role {
 	return domain.Role{
-		MemberId:   memberId,
-		CafeId:     cafeId,
-		CafeRoleId: d.CafeRoleId,
-		CreatedAt:  time.Now(),
+		MemberId:    memberId,
+		CafeId:      cafeId,
+		CafeRoleIds: d.CafeRoleIds,
+		CreatedAt:   time.Now(),
 	}
 }
 
-type PatchDto struct {
-	CafeRoleId int `json:"cafe_role_id"`
+type PutDto struct {
+	CafeRoleIds string `json:"cafe_role_ids"`
 }
 
-func (d PatchDto) ToDomain(memberId, cafeId, id int) domain.Role {
+func (d PutDto) ToDomain(memberId, cafeId int) domain.Role {
 	return domain.Role{
-		Id:         id,
-		MemberId:   memberId,
-		CafeId:     cafeId,
-		CafeRoleId: d.CafeRoleId,
+		MemberId:    memberId,
+		CafeId:      cafeId,
+		CafeRoleIds: d.CafeRoleIds,
+		CreatedAt:   time.Now(),
 	}
 }

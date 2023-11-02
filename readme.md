@@ -10,15 +10,16 @@ pr 순서 feat => dev => (hotfix/bug)stage => main
 
 # member role 서비스 입니다.
 
-cafe_role_id 와 member_id를 가집니다. 
+cafe_id 와 member_id + cafe_role_ids 를 가집니다.
 
 ## entity 구조
 
 ```text
-member_role{ role_id + member_id = unique key 
+member_role{ cafe_id + member_id = unique key 
     id primary key
-    cafe_role
-    member
+    cafe_role_ids // string 형태로 가짐 (int arr)
+    cafe_id
+    member_id
     created_at
 }
 ```
