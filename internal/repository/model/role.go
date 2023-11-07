@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/uptrace/bun"
 	"member_role/internal/domain"
+	"member_role/internal/repository/request"
 	"time"
 )
 
@@ -16,26 +17,35 @@ type Role struct {
 	CreatedAt   time.Time `bun:"created_at"`
 }
 
-func ToModel(d domain.Role) Role {
+func ToCreateModel(cm request.CreateRole) Role {
 	return Role{
-		Id:          d.Id,
-		MemberId:    d.MemberId,
-		CafeId:      d.CafeId,
-		CafeRoleIds: d.CafeRoleIds,
-		CreatedAt:   d.CreatedAt,
+		MemberId:    cm.MemberId,
+		CafeId:      cm.CafeId,
+		CafeRoleIds: cm.CafeRoleIds,
+		CreatedAt:   cm.CreatedAt,
+	}
+}
+
+func ToUpdateModel(s request.Save) Role {
+	return Role{
+		Id:          s.Id,
+		MemberId:    s.MemberId,
+		CafeId:      s.CafeId,
+		CafeRoleIds: s.CafeRoleIds,
+		CreatedAt:   s.CreatedAt,
 	}
 }
 
 func ToDomainList(models []Role) []domain.Role {
 	results := make([]domain.Role, len(models))
 	for i, m := range models {
-		results[i] = domain.Role{
-			Id:          m.Id,
-			MemberId:    m.MemberId,
-			CafeId:      m.CafeId,
-			CafeRoleIds: m.CafeRoleIds,
-			CreatedAt:   m.CreatedAt,
-		}
+		results[i] = domain.NewRoleBuilder().
+			Id(m.Id).
+			MemberId(m.MemberId).
+			CafeId(m.CafeId).
+			CafeRoleIds(m.CafeRoleIds).
+			CreatedAt(m.CreatedAt).
+			Build()
 	}
 	return results
 }

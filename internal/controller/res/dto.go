@@ -1,7 +1,5 @@
 package res
 
-import "member_role/internal/domain"
-
 type ListTotalDto[T any] struct {
 	Contents []T `json:"contents"`
 	Total    int `json:"total"`
@@ -21,29 +19,10 @@ type MemberRole struct {
 	CafeRoleId string `json:"cafe_role_ids,omitempty"`
 }
 
-func ToDto(d domain.Role) MemberRole {
-	return MemberRole{
-		Id:         d.Id,
-		CafeRoleId: d.CafeRoleIds,
-	}
-}
-
 // 전체 사용자 권한을 확인할때 사용됩니다.
 
 type MemberDetailRole struct {
-	Id         int    `json:"id"`
-	CafeRoleId string `json:"cafe_role_ids"`
-	MemberId   int    `json:"member_id"`
-}
-
-func ToDetailList(domains []domain.Role) []MemberDetailRole {
-	results := make([]MemberDetailRole, len(domains))
-	for i, d := range domains {
-		results[i] = MemberDetailRole{
-			Id:         d.Id,
-			MemberId:   d.MemberId,
-			CafeRoleId: d.CafeRoleIds,
-		}
-	}
-	return results
+	Id          int    `json:"id"`
+	CafeRoleIds string `json:"cafe_role_ids"`
+	MemberId    int    `json:"member_id"`
 }
