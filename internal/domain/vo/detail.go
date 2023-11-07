@@ -1,0 +1,7 @@
+package vo
+
+type Detail struct {
+	ID           int    // 멤버권한 아이디 식별자
+	MemberId     int    // 멤버 식별자
+	CafeRolesIds string // 해당 멤버 카페 권한 아이디 리스트
+}
