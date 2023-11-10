@@ -30,6 +30,7 @@ func (r Repository) CreateRole(ctx context.Context, cr request.CreateRole) error
 
 	if err != nil {
 		log.Println("CreateRole NewInsert err: ", err)
+		return err
 	}
 	return nil
 }
